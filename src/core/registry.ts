@@ -131,6 +131,14 @@ const registry: ToolMeta[] = [
     tags: ['code', 'beautify', '美化', '格式化'],
   },
   {
+    id: 'html-code-runner',
+    name: 'HTML/CSS/JS 在线运行',
+    icon: 'javascript',
+    category: 'code',
+    description: '粘贴代码一键运行，实时预览页面渲染效果',
+    tags: ['html', 'css', 'javascript', 'js', 'run', 'preview', '代码运行', '实时预览'],
+  },
+  {
     id: 'regex-test',
     name: '正则测试',
     icon: 'regular_expression',

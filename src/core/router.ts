@@ -44,6 +44,7 @@ const toolLoaders: Record<string, () => Promise<ToolModule>> = {
   // 代码工具
   'json-formatter': () => import('../pages/tools/json-formatter'),
   'code-beautify': () => import('../pages/tools/code-beautify'),
+  'html-code-runner': () => import('../pages/tools/html-code-runner'),
   'regex-test': () => import('../pages/tools/regex-test'),
   'markdown-preview': () => import('../pages/tools/markdown-preview'),
   'code-highlight': () => import('../pages/tools/code-highlight'),

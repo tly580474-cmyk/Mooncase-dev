@@ -470,6 +470,182 @@
   gap: 8px;
 }
 
+/* HTML/CSS/JS 在线运行 */
+.html-runner {
+  gap: 16px;
+}
+
+.html-runner-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-container-lowest);
+}
+
+.html-runner-toggle {
+  flex: 0 0 auto;
+}
+
+.html-runner-workspace {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.95fr) minmax(420px, 1.05fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.html-runner-editors {
+  display: grid;
+  grid-template-rows: repeat(3, minmax(160px, 1fr));
+  gap: 12px;
+  min-width: 0;
+}
+
+.html-runner-editor {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.html-runner-editor-head,
+.html-runner-preview-head,
+.html-runner-console-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.html-runner-editor-head {
+  margin-bottom: 8px;
+}
+
+.html-runner-editor-head span {
+  color: var(--color-on-surface-variant);
+  font: var(--text-body-sm);
+}
+
+.html-runner-code {
+  min-height: 160px;
+  height: 100%;
+  resize: vertical;
+  line-height: 1.55;
+  tab-size: 2;
+}
+
+.html-runner-preview-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 640px;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-container-lowest);
+  overflow: hidden;
+}
+
+.html-runner-preview-head {
+  min-height: 64px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-outline-variant);
+  background: var(--color-surface-container-low);
+}
+
+.html-runner-preview-head h2 {
+  margin: 0 0 4px;
+  color: var(--color-on-surface);
+  font: var(--text-headline-sm);
+}
+
+.html-runner-preview-head p {
+  margin: 0;
+  color: var(--color-on-surface-variant);
+  font: var(--text-body-sm);
+}
+
+.html-runner-preview {
+  width: 100%;
+  min-height: 420px;
+  flex: 1;
+  border: 0;
+  background: #ffffff;
+}
+
+.html-runner-console {
+  border-top: 1px solid var(--color-outline-variant);
+  background: var(--color-surface-container-lowest);
+}
+
+.html-runner-console-head {
+  min-height: 44px;
+  padding: 8px 12px 8px 16px;
+  color: var(--color-on-surface);
+  font: var(--text-label-md);
+  font-weight: 600;
+}
+
+.html-runner-console-head .btn {
+  padding: 8px 10px;
+}
+
+.html-runner-console-body {
+  height: 132px;
+  padding: 12px 16px;
+  overflow: auto;
+  border-top: 1px solid var(--color-outline-variant);
+  color: var(--color-on-surface-variant);
+  font: var(--text-body-sm);
+  font-family: var(--font-mono);
+  white-space: pre-wrap;
+}
+
+.html-runner-console-line {
+  padding: 3px 0;
+  color: var(--color-on-surface);
+  word-break: break-word;
+}
+
+.html-runner-console-line--warn {
+  color: var(--color-diff-mod-text);
+}
+
+.html-runner-console-line--error {
+  color: var(--color-error);
+}
+
+@media (max-width: 1100px) {
+  .html-runner-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .html-runner-preview-panel {
+    min-height: 560px;
+  }
+}
+
+@media (max-width: 767px) {
+  .html-runner-toolbar,
+  .html-runner-preview-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .html-runner-editors {
+    grid-template-rows: none;
+  }
+
+  .html-runner-code {
+    height: 220px;
+  }
+
+  .html-runner-preview-panel {
+    min-height: 520px;
+  }
+}
+
 /* 统计卡片网格 */
 .stat-grid {
   display: grid;
