@@ -189,7 +189,7 @@ const registry: ToolMeta[] = [
   {
     id: 'mermaid-flowchart',
     name: 'Mermaid 流程图',
-    icon: 'share',
+    icon: 'flowchart',
     category: 'code',
     description: '使用 Mermaid 语法在线绘制流程图，支持实时预览、缩放和导出',
     tags: ['mermaid', 'flowchart', '流程图', '图表', 'graph', 'diagram'],
