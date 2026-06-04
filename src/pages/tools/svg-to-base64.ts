@@ -12,7 +12,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/code" class="tool-page-back">${icon('code')} 代码工具</a>
+          <a href="#/encoding" class="tool-page-back">${icon('binary')} 编码解码</a>
           <h1 style="font: var(--text-headline-md);">SVG转Base64</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">将 SVG 代码或文件转换为 Base64 编码</p>
         </div>

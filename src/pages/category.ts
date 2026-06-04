@@ -15,14 +15,14 @@ const categoryNames: Record<ToolCategory, string> = {
 };
 
 const categoryDescriptions: Record<ToolCategory, string> = {
-  text: '文本处理、转换、对比与统计工具',
-  image: '图片压缩、转换与在线编辑',
-  code: '代码格式化、压缩与测试工具',
-  conversion: '各种格式之间的互转工具',
-  encoding: 'Unicode、Base64、URL、摩斯密码等编解码工具',
-  generator: '密码、UUID、占位文等生成工具',
-  security: '加密、哈希、安全检测工具',
-  network: 'IP 查询、DNS 解析等网络工具',
+  text: '文本统计、提取、替换与语言处理',
+  image: '图片编辑、识别、取色与动图处理',
+  code: '代码格式化、运行、预览与图表绘制',
+  conversion: '文档、数据、图片与视频格式互转',
+  encoding: '文本、链接、令牌与媒体编码解码',
+  generator: 'UUID、二维码、占位文与字符艺术生成',
+  security: '密码、哈希、签名与加密解密工具',
+  network: 'IP、DNS、连通性与 HTTP 请求测试',
 };
 
 const categoryColors: Record<ToolCategory, string> = {

@@ -8,7 +8,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/code" class="tool-page-back">${icon('code')} 代码工具</a>
+          <a href="#/encoding" class="tool-page-back">${icon('binary')} 编码解码</a>
           <h1 style="font: var(--text-headline-md);">图片Base64互换</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">图片文件与 Base64 编码字符串双向转换</p>
         </div>

@@ -318,204 +318,252 @@ function trunc(s: string, max: number): string {
 // Auto-layout
 // =============================================================================
 
-function autoLayout(state: ERState): void {
+interface DiagramBounds {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+}
+
+function getDiagramBounds(state: ERState): DiagramBounds | null {
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+
+  for (const e of state.entities) {
+    minX = Math.min(minX, e.x - ENT_W / 2); maxX = Math.max(maxX, e.x + ENT_W / 2);
+    minY = Math.min(minY, e.y - ENT_H / 2); maxY = Math.max(maxY, e.y + ENT_H / 2);
+  }
+  for (const a of state.attributes) {
+    minX = Math.min(minX, a.x - ATTR_RX); maxX = Math.max(maxX, a.x + ATTR_RX);
+    minY = Math.min(minY, a.y - ATTR_RY); maxY = Math.max(maxY, a.y + ATTR_RY);
+  }
+  for (const r of state.relationships) {
+    minX = Math.min(minX, r.x - REL_HW); maxX = Math.max(maxX, r.x + REL_HW);
+    minY = Math.min(minY, r.y - REL_HH); maxY = Math.max(maxY, r.y + REL_HH);
+  }
+
+  if (!isFinite(minX)) return null;
+  return { minX, minY, maxX, maxY };
+}
+
+function applyLayeredAutoLayout(state: ERState): void {
   const eMap = new Map(state.entities.map(e => [e.id, e]));
   if (state.entities.length === 0) return;
 
-  // ---- Build adjacency & classify entities ----
-
-  const adj = new Map<string, string[]>();
-  const nSideCount = new Map<string, number>();
-  for (const e of state.entities) {
-    adj.set(e.id, []);
-    nSideCount.set(e.id, 0);
-  }
-
-  for (const r of state.relationships) {
-    const ids = r.connections.map(c => c.entityId);
-    for (let i = 0; i < ids.length; i++) {
-      for (let j = i + 1; j < ids.length; j++) {
-        adj.get(ids[i])!.push(ids[j]);
-        adj.get(ids[j])!.push(ids[i]);
-      }
-    }
-    for (const c of r.connections) {
-      if (c.cardinality === 'N' || c.cardinality === 'M') {
-        nSideCount.set(c.entityId, nSideCount.get(c.entityId)! + 1);
-      }
-    }
-  }
-
-  // Junction tables: N-side of ≥2 relationships, at most 1 non-key attribute
-  const junctions = new Set<string>();
-  for (const e of state.entities) {
-    const own = state.attributes.filter(a => a.parentId === e.id && !a.isKey).length;
-    if (nSideCount.get(e.id)! >= 2 && own <= 1) junctions.add(e.id);
-  }
-
-  // ---- Find center: non-junction with highest degree ----
-  let centerId = state.entities[0].id;
-  let maxDeg = -1;
-  for (const e of state.entities) {
-    if (!junctions.has(e.id) && adj.get(e.id)!.length > maxDeg) {
-      maxDeg = adj.get(e.id)!.length;
-      centerId = e.id;
-    }
-  }
-
-  const CENTER_X = 600, CENTER_Y = 420;
-  const RING_RADIUS = [0, 440, 800, 1140];
-
-  // ---- BFS from center (traverse through junctions) ----
-  const visited = new Set<string>();
-  const rings: { id: string; parent: string | null }[][] = [];
-  visited.add(centerId);
-  rings.push([{ id: centerId, parent: null }]);
-
-  const bfsQueue: { id: string; parent: string; dist: number }[] = [];
-  bfsQueue.push({ id: centerId, parent: '', dist: 0 });
-
-  while (bfsQueue.length > 0) {
-    const cur = bfsQueue.shift()!;
-    const dist = cur.dist + 1;
-    for (const nb of adj.get(cur.id)!) {
-      if (visited.has(nb)) continue;
-      visited.add(nb);
-      if (!rings[dist]) rings[dist] = [];
-      rings[dist].push({ id: nb, parent: cur.id });
-      bfsQueue.push({ id: nb, parent: cur.id, dist });
-    }
-  }
-
-  // ---- Assign angular positions per ring (radial distribution) ----
-  const parentAngle = new Map<string, number>();
-  parentAngle.set(centerId, 0);
-
-  for (let ring = 1; ring < rings.length; ring++) {
-    const nonJunc = rings[ring].filter(n => !junctions.has(n.id));
-    const n = nonJunc.length;
-
-    if (n === 1) {
-      // Single entity: use parent's angle
-      const pa = parentAngle.get(nonJunc[0].parent!) ?? 0;
-      parentAngle.set(nonJunc[0].id, pa);
-    } else if (n > 1) {
-      // Multiple entities: use parent angles to determine a sensible start,
-      // then distribute evenly
-      let baseAngle = 0;
-      let baseCount = 0;
-      for (const node of nonJunc) {
-        if (node.parent && parentAngle.has(node.parent)) {
-          baseAngle += parentAngle.get(node.parent)!;
-          baseCount++;
-        }
-      }
-      const startAngle = baseCount > 0 ? baseAngle / baseCount - Math.PI / 4 : -Math.PI / 2;
-
-      for (let i = 0; i < n; i++) {
-        const angle = startAngle + (2 * Math.PI * i) / n;
-        parentAngle.set(nonJunc[i].id, angle);
-      }
-    }
-
-    // Junction tables inherit their parent's angle
-    for (const node of rings[ring]) {
-      if (junctions.has(node.id) && node.parent) {
-        const pa = parentAngle.get(node.parent);
-        if (pa !== undefined) parentAngle.set(node.id, pa);
-      }
-    }
-  }
-
-  // ---- Place all non-junction entities radially ----
-  const placed = new Map<string, { x: number; y: number }>();
-  const center = eMap.get(centerId)!;
-  center.x = CENTER_X;
-  center.y = CENTER_Y;
-  placed.set(centerId, { x: CENTER_X, y: CENTER_Y });
-
-  for (let ring = 1; ring < rings.length; ring++) {
-    const r = RING_RADIUS[Math.min(ring, RING_RADIUS.length - 1)];
-    for (const node of rings[ring]) {
-      if (junctions.has(node.id)) continue;
-      const angle = parentAngle.get(node.id);
-      if (angle === undefined) continue;
-      const e = eMap.get(node.id)!;
-      e.x = CENTER_X + Math.cos(angle) * r;
-      e.y = CENTER_Y + Math.sin(angle) * r;
-      placed.set(node.id, { x: e.x, y: e.y });
-    }
-  }
-
-  // ---- Place junction tables between their connected entities ----
-  for (const jtId of junctions) {
-    const nbs = adj.get(jtId)!;
-    const placedNbs = nbs.filter(id => placed.has(id));
-    const e = eMap.get(jtId)!;
-
-    if (placedNbs.length >= 2) {
-      const a = placed.get(placedNbs[0])!;
-      const b = placed.get(placedNbs[1])!;
-      e.x = (a.x + b.x) / 2;
-      e.y = (a.y + b.y) / 2 + 70;
-    } else if (placedNbs.length === 1) {
-      const p = placed.get(placedNbs[0])!;
-      const angle = parentAngle.get(jtId) ?? 0;
-      e.x = p.x + Math.cos(angle) * 250;
-      e.y = p.y + Math.sin(angle) * 250;
-    } else {
-      e.x = CENTER_X + 220;
-      e.y = CENTER_Y + 220;
-    }
-    placed.set(jtId, { x: e.x, y: e.y });
-  }
-
-  // ---- Resolve entity overlaps iteratively ----
-  const MIN_DX = ENT_W + 120;  // minimum horizontal gap between entity centers
-  const MIN_DY = ENT_H + 180;  // minimum vertical gap (accounts for attr rows below)
-
-  for (let iter = 0; iter < 80; iter++) {
-    let moved = false;
-    for (let i = 0; i < state.entities.length; i++) {
-      for (let j = i + 1; j < state.entities.length; j++) {
-        const a = state.entities[i];
-        const b = state.entities[j];
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
-        const adx = Math.abs(dx) || 0.01;
-        const ady = Math.abs(dy) || 0.01;
-
-        const overlapX = MIN_DX - adx;
-        const overlapY = MIN_DY - ady;
-        if (overlapX <= 0 || overlapY <= 0) continue;
-
-        moved = true;
-        // Push along the axis with greater overlap, proportional to overlap
-        const pushX = (overlapX / 2) * Math.sign(dx);
-        const pushY = (overlapY / 2) * Math.sign(dy);
-
-        // Push the entity farther from center more, the nearer one less
-        const distA = Math.hypot(a.x - CENTER_X, a.y - CENTER_Y);
-        const distB = Math.hypot(b.x - CENTER_X, b.y - CENTER_Y);
-        const wA = distB / (distA + distB + 0.01);
-        const wB = distA / (distA + distB + 0.01);
-
-        a.x -= pushX * wA;
-        a.y -= pushY * wA;
-        b.x += pushX * wB;
-        b.y += pushY * wB;
-      }
-    }
-    if (!moved) break;
-  }
-
-  // ---- Place attributes below their parent entity ----
   const ATTRS_PER_ROW = 4;
   const ATTR_GAP_X = ATTR_RX * 2 + 24;
   const ATTR_GAP_Y = ATTR_RY * 2 + 16;
 
+  const attrsByParent = new Map<string, AttrNode[]>();
+  for (const attr of state.attributes) {
+    const list = attrsByParent.get(attr.parentId) ?? [];
+    list.push(attr);
+    attrsByParent.set(attr.parentId, list);
+  }
+
+  const children = new Map<string, Set<string>>();
+  const parents = new Map<string, Set<string>>();
+  const undirected = new Map<string, Set<string>>();
   for (const e of state.entities) {
-    const attrs = state.attributes.filter(a => a.parentId === e.id);
+    children.set(e.id, new Set());
+    parents.set(e.id, new Set());
+    undirected.set(e.id, new Set());
+  }
+
+  function connect(parentId: string, childId: string) {
+    if (parentId === childId || !eMap.has(parentId) || !eMap.has(childId)) return;
+    children.get(parentId)!.add(childId);
+    parents.get(childId)!.add(parentId);
+    undirected.get(parentId)!.add(childId);
+    undirected.get(childId)!.add(parentId);
+  }
+
+  for (const r of state.relationships) {
+    const ids = r.connections.map(c => c.entityId).filter(id => eMap.has(id));
+    for (let i = 0; i < ids.length; i++) {
+      for (let j = i + 1; j < ids.length; j++) {
+        undirected.get(ids[i])!.add(ids[j]);
+        undirected.get(ids[j])!.add(ids[i]);
+      }
+    }
+
+    const manySide = r.connections.filter(c => c.cardinality === 'N' || c.cardinality === 'M');
+    const oneSide = r.connections.filter(c => c.cardinality !== 'N' && c.cardinality !== 'M');
+    if (manySide.length > 0 && oneSide.length > 0) {
+      for (const one of oneSide) {
+        for (const many of manySide) connect(one.entityId, many.entityId);
+      }
+    } else if (ids.length >= 2) {
+      connect(ids[0], ids[1]);
+    }
+  }
+
+  function getComponents(): string[][] {
+    const components: string[][] = [];
+    const seen = new Set<string>();
+    for (const e of state.entities) {
+      if (seen.has(e.id)) continue;
+      const component: string[] = [];
+      const queue = [e.id];
+      seen.add(e.id);
+      while (queue.length > 0) {
+        const id = queue.shift()!;
+        component.push(id);
+        for (const next of undirected.get(id)!) {
+          if (seen.has(next)) continue;
+          seen.add(next);
+          queue.push(next);
+        }
+      }
+      components.push(component);
+    }
+    return components.sort((a, b) => b.length - a.length);
+  }
+
+  function footprint(entityId: string) {
+    const attrs = attrsByParent.get(entityId) ?? [];
+    const rows = Math.ceil(attrs.length / ATTRS_PER_ROW);
+    const cols = Math.min(ATTRS_PER_ROW, attrs.length);
+    const attrWidth = cols > 0 ? (cols - 1) * ATTR_GAP_X + ATTR_RX * 2 : 0;
+    const attrHeight = rows > 0 ? 44 + (rows - 1) * ATTR_GAP_Y + ATTR_RY * 2 : 0;
+    return {
+      width: Math.max(ENT_W, attrWidth),
+      height: ENT_H + attrHeight,
+    };
+  }
+
+  function chooseRoots(ids: string[]): string[] {
+    const roots = ids.filter(id => parents.get(id)!.size === 0);
+    if (roots.length > 0) return roots;
+    let best = ids[0];
+    for (const id of ids) {
+      if (undirected.get(id)!.size > undirected.get(best)!.size) best = id;
+    }
+    return [best];
+  }
+
+  function assignLayers(ids: string[]): Map<string, number> {
+    const idSet = new Set(ids);
+    const layers = new Map<string, number>();
+    const queue: string[] = [];
+
+    for (const root of chooseRoots(ids)) {
+      layers.set(root, 0);
+      queue.push(root);
+    }
+
+    while (queue.length > 0) {
+      const id = queue.shift()!;
+      const baseLayer = layers.get(id)!;
+      const directedNext = [...children.get(id)!].filter(next => idSet.has(next));
+      const fallbackNext = [...undirected.get(id)!].filter(next => idSet.has(next));
+
+      for (const next of [...directedNext, ...fallbackNext]) {
+        const nextLayer = baseLayer + 1;
+        if (layers.has(next) && layers.get(next)! <= nextLayer) continue;
+        layers.set(next, nextLayer);
+        queue.push(next);
+      }
+    }
+
+    for (const id of ids) {
+      if (!layers.has(id)) layers.set(id, 0);
+    }
+
+    const minLayer = Math.min(...layers.values());
+    for (const [id, layer] of layers) layers.set(id, layer - minLayer);
+    return layers;
+  }
+
+  function orderLayers(layerMap: Map<string, number>): Map<number, string[]> {
+    const layers = new Map<number, string[]>();
+    for (const [id, layer] of layerMap) {
+      const list = layers.get(layer) ?? [];
+      list.push(id);
+      layers.set(layer, list);
+    }
+
+    const sortedLayers = [...layers.keys()].sort((a, b) => a - b);
+    for (const layer of sortedLayers) {
+      layers.get(layer)!.sort((a, b) => eMap.get(a)!.name.localeCompare(eMap.get(b)!.name));
+    }
+
+    for (const layer of sortedLayers.slice(1)) {
+      const prev = layers.get(layer - 1) ?? [];
+      const prevIndex = new Map(prev.map((id, index) => [id, index]));
+      layers.get(layer)!.sort((a, b) => {
+        const score = (id: string) => {
+          const nbs = [...undirected.get(id)!].filter(nb => prevIndex.has(nb));
+          if (nbs.length === 0) return 999;
+          return nbs.reduce((sum, nb) => sum + prevIndex.get(nb)!, 0) / nbs.length;
+        };
+        return score(a) - score(b) || eMap.get(a)!.name.localeCompare(eMap.get(b)!.name);
+      });
+    }
+    return layers;
+  }
+
+  const H_GAP = 360;
+  const V_GAP = 130;
+  const COMPONENT_GAP = 190;
+  const START_X = 160;
+  let cursorY = 150;
+
+  for (const component of getComponents()) {
+    const layerMap = assignLayers(component);
+    const layers = orderLayers(layerMap);
+    const layerIds = [...layers.keys()].sort((a, b) => a - b);
+
+    const layerWidths = new Map<number, number>();
+    const layerHeights = new Map<number, number>();
+    for (const layer of layerIds) {
+      const ids = layers.get(layer)!;
+      let maxWidth = 0;
+      let totalHeight = 0;
+      ids.forEach((id, index) => {
+        const fp = footprint(id);
+        maxWidth = Math.max(maxWidth, fp.width);
+        totalHeight += fp.height + (index > 0 ? V_GAP : 0);
+      });
+      layerWidths.set(layer, maxWidth);
+      layerHeights.set(layer, totalHeight);
+    }
+
+    const componentHeight = Math.max(...layerHeights.values(), ENT_H);
+    let x = START_X;
+
+    for (const layer of layerIds) {
+      const ids = layers.get(layer)!;
+      const columnWidth = layerWidths.get(layer)!;
+      const columnHeight = layerHeights.get(layer)!;
+      let y = cursorY + (componentHeight - columnHeight) / 2;
+
+      for (const id of ids) {
+        const e = eMap.get(id)!;
+        const fp = footprint(id);
+        e.x = x + columnWidth / 2;
+        e.y = y + ENT_H / 2;
+        y += fp.height + V_GAP;
+      }
+
+      x += columnWidth + H_GAP;
+    }
+
+    cursorY += componentHeight + COMPONENT_GAP;
+  }
+
+  let minEntityX = Infinity, minEntityY = Infinity;
+  for (const e of state.entities) {
+    minEntityX = Math.min(minEntityX, e.x - ENT_W / 2);
+    minEntityY = Math.min(minEntityY, e.y - ENT_H / 2);
+  }
+  if (isFinite(minEntityX) && isFinite(minEntityY)) {
+    const dx = 120 - minEntityX;
+    const dy = 120 - minEntityY;
+    for (const e of state.entities) { e.x += dx; e.y += dy; }
+  }
+
+  for (const e of state.entities) {
+    const attrs = attrsByParent.get(e.id) ?? [];
     attrs.forEach((a, j) => {
       const row = Math.floor(j / ATTRS_PER_ROW);
       const col = j % ATTRS_PER_ROW;
@@ -526,26 +574,65 @@ function autoLayout(state: ERState): void {
     });
   }
 
-  // Position relationship attributes
+  const relsByPair = new Map<string, RelNode[]>();
   for (const r of state.relationships) {
-    const attrs = state.attributes.filter(a => a.parentId === r.id);
-    attrs.forEach((a, j) => {
-      a.x = r.x + REL_HW + 40;
-      a.y = r.y + j * 50;
-    });
+    const ids = r.connections.map(c => c.entityId).filter(id => eMap.has(id));
+    if (ids.length === 2) {
+      const key = [...ids].sort().join('|');
+      const list = relsByPair.get(key) ?? [];
+      list.push(r);
+      relsByPair.set(key, list);
+    }
   }
 
-  // ---- Position relationship diamonds between connected entities ----
   for (const r of state.relationships) {
-    let cx = 0, cy = 0, n = 0;
-    for (const conn of r.connections) {
-      const e = eMap.get(conn.entityId);
-      if (!e) continue;
-      cx += e.x; cy += e.y; n++;
+    const connected = r.connections
+      .map(c => eMap.get(c.entityId))
+      .filter((e): e is EntityNode => Boolean(e));
+
+    if (connected.length === 0) continue;
+
+    if (connected.length === 1) {
+      const e = connected[0];
+      r.x = e.x + ENT_W / 2 + 110;
+      r.y = e.y - ENT_H / 2 - 70;
+      continue;
     }
-    if (n > 0) { r.x = cx / n; r.y = cy / n; }
+
+    let cx = 0, cy = 0;
+    for (const e of connected) {
+      cx += e.x;
+      cy += e.y;
+    }
+    r.x = cx / connected.length;
+    r.y = cy / connected.length;
+
+    if (connected.length === 2) {
+      const a = connected[0], b = connected[1];
+      const key = [a.id, b.id].sort().join('|');
+      const siblings = relsByPair.get(key) ?? [r];
+      const index = siblings.indexOf(r);
+      const offset = (index - (siblings.length - 1) / 2) * 76;
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const len = Math.hypot(dx, dy) || 1;
+      r.x += -dy / len * offset;
+      r.y += dx / len * offset;
+    }
+  }
+
+  for (const r of state.relationships) {
+    const attrs = attrsByParent.get(r.id) ?? [];
+    attrs.forEach((a, j) => {
+      a.x = r.x + REL_HW + 54;
+      a.y = r.y + (j - (attrs.length - 1) / 2) * 54;
+    });
   }
 }
+
+function autoLayout(state: ERState): void {
+  applyLayeredAutoLayout(state);
+}
+
 
 // =============================================================================
 // SQL Parser
@@ -802,7 +889,7 @@ export default {
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
               <div>
                 <label class="tool-label" style="margin:0;">ER 图预览 (Chen 记法) — 拖拽移动 · 滚轮缩放 · 点击选中 · Delete 删除</label>
-                <span style="display:block; font-size:11px; color:var(--color-on-surface-variant); margin-top:2px;">提示：自动布局可能存在重叠，请自行拖拽优化布局</span>
+                <span style="display:block; font-size:11px; color:var(--color-on-surface-variant); margin-top:2px;">提示：自动布局会按外键层级排列，并自动适配画布</span>
               </div>
               <div style="display:flex; align-items:center; gap:4px;">
                 <button class="btn btn-ghost" id="er-zoom-out" title="缩小">${icon('search', 14)}</button>
@@ -880,6 +967,22 @@ export default {
 
     function updateZoomLabel() {
       zoomLabel.textContent = Math.round(state.zoom * 100) + '%';
+    }
+
+    function fitDiagramToCanvas(maxZoom = 1.35) {
+      const bounds = getDiagramBounds(state);
+      if (!bounds) return;
+      const rect = canvasEl.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) return;
+
+      const pad = 48;
+      const bw = Math.max(bounds.maxX - bounds.minX, 200);
+      const bh = Math.max(bounds.maxY - bounds.minY, 200);
+      const zx = (rect.width - pad * 2) / bw;
+      const zy = (rect.height - pad * 2) / bh;
+      state.zoom = Math.max(0.15, Math.min(zx, zy, maxZoom));
+      state.panX = rect.width / 2 - ((bounds.minX + bounds.maxX) / 2) * state.zoom;
+      state.panY = rect.height / 2 - ((bounds.minY + bounds.maxY) / 2) * state.zoom;
     }
 
     function redraw() {
@@ -1036,26 +1139,15 @@ export default {
       const svg = canvasEl.querySelector('#er-diagram-svg');
       if (!svg) return '';
 
-      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-      for (const e of state.entities) {
-        minX = Math.min(minX, e.x - ENT_W / 2); maxX = Math.max(maxX, e.x + ENT_W / 2);
-        minY = Math.min(minY, e.y - ENT_H / 2); maxY = Math.max(maxY, e.y + ENT_H / 2);
-      }
-      for (const a of state.attributes) {
-        minX = Math.min(minX, a.x - ATTR_RX); maxX = Math.max(maxX, a.x + ATTR_RX);
-        minY = Math.min(minY, a.y - ATTR_RY); maxY = Math.max(maxY, a.y + ATTR_RY);
-      }
-      for (const r of state.relationships) {
-        minX = Math.min(minX, r.x - REL_HW); maxX = Math.max(maxX, r.x + REL_HW);
-        minY = Math.min(minY, r.y - REL_HH); maxY = Math.max(maxY, r.y + REL_HH);
-      }
-      if (!isFinite(minX)) return '';
+      const bounds = getDiagramBounds(state);
+      if (!bounds) return '';
 
       const PAD = 30;
-      const vbW = maxX - minX + PAD * 2, vbH = maxY - minY + PAD * 2;
+      const vbW = bounds.maxX - bounds.minX + PAD * 2;
+      const vbH = bounds.maxY - bounds.minY + PAD * 2;
       const clone = svg.cloneNode(true) as SVGSVGElement;
       clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-      clone.setAttribute('viewBox', `${minX - PAD} ${minY - PAD} ${vbW} ${vbH}`);
+      clone.setAttribute('viewBox', `${bounds.minX - PAD} ${bounds.minY - PAD} ${vbW} ${vbH}`);
       clone.setAttribute('width', String(vbW));
       clone.setAttribute('height', String(vbH));
       clone.removeAttribute('style');
@@ -1094,6 +1186,7 @@ export default {
             state = { entities: [], attributes: [], relationships: [], selectedId: null, zoom: 1, panX: 20, panY: 20 };
           }
         }
+        fitDiagramToCanvas();
         redraw();
         parseTimer = null;
       }, DEBOUNCE_MS);
@@ -1120,6 +1213,7 @@ export default {
           errorEl.style.display = '';
         }
       }
+      fitDiagramToCanvas();
       redraw();
     });
 
@@ -1127,6 +1221,7 @@ export default {
       sqlInput.value = SAMPLE_SQL;
       errorEl.style.display = 'none';
       state = parseSQL(SAMPLE_SQL);
+      fitDiagramToCanvas();
       redraw();
     });
 
@@ -1204,23 +1299,13 @@ export default {
 
     container.querySelector('#er-auto-layout')!.addEventListener('click', () => {
       autoLayout(state);
-      state.panX = 20; state.panY = 20; state.zoom = 1;
       state.selectedId = null;
+      fitDiagramToCanvas();
       redraw();
     });
 
     container.querySelector('#er-fit')!.addEventListener('click', () => {
-      if (state.entities.length === 0) return;
-      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-      for (const e of state.entities) {
-        minX = Math.min(minX, e.x - ENT_W / 2); maxX = Math.max(maxX, e.x + ENT_W / 2);
-        minY = Math.min(minY, e.y - ENT_H / 2); maxY = Math.max(maxY, e.y + ENT_H / 2);
-      }
-      const rect = canvasEl.getBoundingClientRect();
-      const bw = maxX - minX || 200, bh = maxY - minY || 200;
-      state.zoom = Math.min((rect.width - 60) / bw, (rect.height - 60) / bh, 1.5);
-      state.panX = (rect.width - bw * state.zoom) / 2 - minX * state.zoom + 10;
-      state.panY = (rect.height - bh * state.zoom) / 2 - minY * state.zoom + 10;
+      fitDiagramToCanvas(1.5);
       redraw();
     });
 
@@ -1280,6 +1365,7 @@ export default {
 
     // Init
     const cleanupInteraction = setupInteraction();
+    fitDiagramToCanvas();
     redraw();
 
     // Store cleanup reference for destroy

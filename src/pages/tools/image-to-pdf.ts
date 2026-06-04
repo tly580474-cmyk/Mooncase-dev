@@ -16,7 +16,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/image" class="tool-page-back">${icon('image')} 图片工具</a>
+          <a href="#/conversion" class="tool-page-back">${icon('swap_horiz')} 格式转换</a>
           <h1 style="font: var(--text-headline-md);">图片转PDF</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">将多张图片合并为PDF文件，支持拖拽排序</p>
         </div>

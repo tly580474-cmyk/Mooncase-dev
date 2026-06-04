@@ -122,7 +122,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/text" class="tool-page-back">${icon('description')} 文本工具</a>
+          <a href="#/conversion" class="tool-page-back">${icon('swap_horiz')} 格式转换</a>
           <h1 style="font: var(--text-headline-md);">Markdown 转 Word</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">将 Markdown 文本转换为 Word 文档</p>
         </div>

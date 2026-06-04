@@ -348,7 +348,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/code" class="tool-page-back">${icon('code')} 代码工具</a>
+          <a href="#/generator" class="tool-page-back">${icon('settings_suggest')} 生成器</a>
           <h1 style="font: var(--text-headline-md);">ASCII文字图片生成器</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">将文本或图片转换为 ASCII 字符艺术图案，支持 BAT/CMD 导出</p>
         </div>
