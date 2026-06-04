@@ -3,6 +3,13 @@ import qrcode from 'qrcode-generator';
 
 type QRType = 'text' | 'url' | 'wifi' | 'email' | 'phone' | 'sms';
 
+const utf8Encoder = new TextEncoder();
+qrcode.stringToBytes = (text: string) => Array.from(utf8Encoder.encode(text));
+
+function escapeWifiField(value: string): string {
+  return value.replace(/([\\;,":])/g, '\\$1');
+}
+
 function buildPayload(type: QRType, inputs: Record<string, string>): string {
   switch (type) {
     case 'text':
@@ -10,8 +17,8 @@ function buildPayload(type: QRType, inputs: Record<string, string>): string {
     case 'url':
       return inputs.url || '';
     case 'wifi': {
-      const ssid = inputs.ssid || '';
-      const password = inputs.password || '';
+      const ssid = escapeWifiField(inputs.ssid || '');
+      const password = escapeWifiField(inputs.password || '');
       const enc = inputs.encryption || 'WPA';
       return `WIFI:T:${enc};S:${ssid};P:${password};;`;
     }
@@ -281,9 +288,17 @@ export default {
       const bg = (container.querySelector('#qr-bg') as HTMLInputElement).value;
       const size = Number((container.querySelector('#qr-size') as HTMLSelectElement).value);
 
-      const qr = qrcode(0, selectedEC);
-      qr.addData(payload);
-      qr.make();
+      let qr: ReturnType<typeof qrcode>;
+      try {
+        qr = qrcode(0, selectedEC);
+        qr.addData(payload, 'Byte');
+        qr.make();
+      } catch (e: any) {
+        errorEl.textContent = '生成失败: ' + (e.message || String(e));
+        errorEl.style.display = '';
+        canvas.style.display = 'none';
+        return;
+      }
 
       const moduleCount = qr.getModuleCount();
       const margin = 4;
