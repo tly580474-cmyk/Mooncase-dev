@@ -39,7 +39,7 @@ const SAMPLE = `flowchart TD
 export default {
   id: 'mermaid-flowchart',
   name: 'Mermaid 流程图',
-  icon: 'share',
+  icon: 'flowchart',
 
   render(container: HTMLElement) {
     const savedCode = getItem<string>(STORAGE_KEY, '');
@@ -47,89 +47,241 @@ export default {
 
     container.innerHTML = `
       <style>
-        .mf-layout { display:flex; gap:12px; height:100%; }
-        .mf-editor { display:flex; flex-direction:column; width:400px; min-width:300px; }
-        .mf-preview { display:flex; flex-direction:column; flex:1; min-width:0; }
-        .mf-textarea { flex:1; resize:none; font-family:var(--font-mono); font-size:12px; min-height:300px; }
-        .mf-canvas { flex:1; border:1px solid var(--color-outline-variant); border-radius:8px; overflow:auto; background:var(--color-surface); position:relative; }
-        .mf-empty-hint { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; color:var(--color-on-surface-variant); pointer-events:none; }
-        .mf-render-wrap { display:flex; align-items:center; justify-content:center; min-width:100%; min-height:100%; padding:24px; }
-        .mf-editor-header, .mf-preview-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
-        .mf-export-bar { display:flex; align-items:center; gap:4px; margin-top:6px; }
-        .mf-export-bar .btn-sm { font-size:12px; padding:6px 10px; }
-        .mf-cheatsheet { margin-top:6px; font-size:12px; }
-        .mf-cheatsheet summary { cursor:pointer; color:var(--color-primary); font-weight:600; padding:4px 0; }
-        .mf-cheatsheet-content { background:var(--color-surface-container); border-radius:6px; padding:10px 12px; margin-top:4px; }
-        .mf-cheatsheet-content p { margin-bottom:4px; color:var(--color-on-surface-variant); }
+        .mf-page { max-width: 100%; }
+        .mf-toolbar {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) auto;
+          gap: 12px;
+          align-items: center;
+          margin-bottom: 14px;
+          padding: 12px 14px;
+          border: 1px solid var(--color-outline-variant);
+          border-radius: var(--radius-md);
+          background: var(--color-surface-container-lowest);
+        }
+        .mf-toolbar-left,
+        .mf-toolbar-actions,
+        .mf-control-group {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+        .mf-toolbar-title {
+          color: var(--color-on-surface);
+          font: var(--text-label-md);
+          font-weight: 700;
+        }
+        .mf-status {
+          color: var(--color-on-surface-variant);
+          font: var(--text-body-sm);
+        }
+        .mf-workspace {
+          display: grid;
+          grid-template-columns: minmax(360px, 0.82fr) minmax(460px, 1.18fr);
+          gap: 16px;
+          height: calc(100vh - 260px);
+          min-height: 560px;
+        }
+        .mf-panel {
+          display: flex;
+          min-width: 0;
+          min-height: 0;
+          flex-direction: column;
+          border: 1px solid var(--color-outline-variant);
+          border-radius: var(--radius-md);
+          background: var(--color-surface-container-lowest);
+          overflow: hidden;
+        }
+        .mf-panel-head {
+          min-height: 56px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          padding: 12px 14px;
+          border-bottom: 1px solid var(--color-outline-variant);
+          background: var(--color-surface-container-low);
+        }
+        .mf-panel-title {
+          margin: 0;
+          color: var(--color-on-surface);
+          font: var(--text-headline-sm);
+        }
+        .mf-textarea {
+          flex: 1;
+          min-height: 0;
+          border: 0;
+          border-radius: 0;
+          resize: none;
+          font-family: var(--font-mono);
+          font-size: 13px;
+          line-height: 1.65;
+        }
+        .mf-textarea:focus {
+          box-shadow: inset 0 0 0 3px var(--color-primary-fixed-dim);
+        }
+        .mf-editor-footer {
+          border-top: 1px solid var(--color-outline-variant);
+          padding: 10px 14px;
+          background: var(--color-surface-container-low);
+        }
+        .mf-canvas {
+          flex: 1;
+          min-height: 0;
+          overflow: auto;
+          position: relative;
+          background:
+            linear-gradient(var(--color-outline-variant) 1px, transparent 1px),
+            linear-gradient(90deg, var(--color-outline-variant) 1px, transparent 1px),
+            var(--color-surface);
+          background-size: 28px 28px;
+          background-position: -1px -1px;
+        }
+        .mf-empty-hint {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          color: var(--color-on-surface-variant);
+          pointer-events: none;
+          text-align: center;
+        }
+        .mf-render-wrap {
+          min-width: 100%;
+          min-height: 100%;
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+          padding: 32px;
+        }
+        .mf-render-surface {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 160px;
+          min-height: 120px;
+          padding: 20px;
+          border: 1px solid var(--color-outline-variant);
+          border-radius: var(--radius-md);
+          background: var(--color-surface-container-lowest);
+          box-shadow: var(--shadow-sm);
+        }
+        .mf-error {
+          display: none;
+          margin-top: 8px;
+          color: var(--color-error);
+          font: var(--text-label-md);
+          overflow-wrap: anywhere;
+        }
+        .mf-cheatsheet { font-size: 12px; }
+        .mf-cheatsheet summary { cursor:pointer; color:var(--color-primary); font-weight:600; }
+        .mf-cheatsheet-content { display:grid; gap:4px; margin-top:8px; color:var(--color-on-surface-variant); }
+        .mf-cheatsheet-content p { margin:0; }
         .mf-cheatsheet-content p:last-child { margin-bottom:0; }
         .mf-cheatsheet-content code { background:var(--color-surface-container-lowest); padding:1px 4px; border-radius:3px; font-family:var(--font-mono); font-size:11px; }
-        .mf-cheatsheet-content hr { border:none; border-top:1px solid var(--color-outline-variant); margin:8px 0; }
-        .btn-sm { font-size:12px; padding:6px 10px; }
-        @media (max-width: 860px) {
-          .mf-layout { flex-direction:column; height:auto; }
-          .mf-editor { width:100%; min-width:0; }
-          .mf-textarea { min-height:200px; }
-          .mf-canvas { min-height:360px; }
+        .mf-btn-icon {
+          width: 40px;
+          height: 40px;
+          padding: 0;
+        }
+        @media (max-width: 1180px) {
+          .mf-workspace {
+            grid-template-columns: 1fr;
+            height: auto;
+          }
+          .mf-panel {
+            min-height: 460px;
+          }
+          .mf-textarea {
+            min-height: 320px;
+          }
+          .mf-canvas {
+            min-height: 440px;
+          }
+        }
+        @media (max-width: 720px) {
+          .mf-toolbar {
+            grid-template-columns: 1fr;
+          }
+          .mf-panel-head {
+            align-items: flex-start;
+            flex-direction: column;
+          }
+          .mf-control-group,
+          .mf-toolbar-actions {
+            width: 100%;
+          }
+          .mf-toolbar-actions .btn,
+          .mf-panel-head .btn {
+            flex: 1 1 auto;
+          }
+          .mf-render-wrap {
+            padding: 20px;
+          }
         }
       </style>
-      <div class="mf-layout">
-        <!-- Left: Editor -->
-        <div class="mf-editor">
-          <div class="mf-editor-header">
-            <label class="tool-label" style="margin:0;">Mermaid 语法</label>
-            <div style="display:flex; gap:4px;">
-              <button class="btn btn-ghost" id="mf-sample" style="font-size:12px;">${icon('history', 14)} 示例</button>
-              <button class="btn btn-ghost" id="mf-clear" style="font-size:12px;">清空</button>
-            </div>
-          </div>
-          <textarea id="mf-input" class="tool-textarea mf-textarea" placeholder="输入 Mermaid 流程图语法..."></textarea>
-          <details class="mf-cheatsheet">
-            <summary>语法参考</summary>
-            <div class="mf-cheatsheet-content">
-              <p><code>flowchart TD</code> — 从上到下（TB/TD）</p>
-              <p><code>flowchart LR</code> — 从左到右</p>
-              <p><code>flowchart RL</code> — 从右到左</p>
-              <p><code>flowchart BT</code> — 从下到上</p>
-              <hr>
-              <p><code>A[矩形]</code> <code>B(圆角)</code> <code>C{菱形}</code></p>
-              <p><code>D((圆形))</code> <code>E[[子程序]]</code> <code>F[(数据库)]</code></p>
-              <hr>
-              <p><code>A --&gt; B</code> 实线箭头</p>
-              <p><code>A --&gt;|标签| B</code> 带标签</p>
-              <p><code>A -.&gt; B</code> 虚线箭头</p>
-              <p><code>A ==&gt; B</code> 粗线箭头</p>
-              <hr>
-              <p><code>subgraph 标题</code> 定义子图，<code>end</code> 结束</p>
-              <p><code>style A fill:#f9f,stroke:#333</code> 自定义样式</p>
-            </div>
-          </details>
-          <div id="mf-error" style="color:var(--color-error); font:var(--text-label-md); margin-top:4px; display:none;"></div>
+      <div class="content mf-page">
+        <div class="tool-page-header">
+          <a href="#/code" class="tool-page-back">${icon('code')} 代码工具</a>
+          <h1 style="font: var(--text-headline-md);">Mermaid 流程图</h1>
+          <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">使用 Mermaid 语法绘制、预览和导出流程图</p>
         </div>
 
-        <!-- Right: Preview -->
-        <div class="mf-preview">
-          <div class="mf-preview-header">
-            <div>
-              <label class="tool-label" style="margin:0;">流程图预览</label>
-            </div>
-            <div style="display:flex; align-items:center; gap:4px;">
-              <button class="btn btn-ghost" id="mf-zoom-out" title="缩小">${icon('zoom_out', 16)}</button>
-              <span id="mf-zoom-label" style="font:var(--text-label-md); min-width:40px; text-align:center;">100%</span>
-              <button class="btn btn-ghost" id="mf-zoom-in" title="放大">${icon('zoom_in', 16)}</button>
-              <button class="btn btn-ghost" id="mf-zoom-reset" title="重置缩放">${icon('maximize', 16)}</button>
-            </div>
+        <div class="mf-toolbar">
+          <div class="mf-toolbar-left">
+            <span class="mf-toolbar-title">流程图工作台</span>
+            <span id="mf-status" class="mf-status">准备渲染</span>
           </div>
-          <div id="mf-canvas" class="mf-canvas">
-            <div id="mf-empty-hint" class="mf-empty-hint">
-              <span style="font-size:40px; line-height:1; opacity:0.3;">${icon('share', 40)}</span>
-              <p style="margin-top:8px; font:var(--text-body-md);">在左侧输入 Mermaid 语法即可预览</p>
+          <div class="mf-toolbar-actions">
+            <button class="btn btn-secondary" id="mf-sample" type="button">${icon('history', 16)} 示例</button>
+            <button class="btn btn-secondary" id="mf-clear" type="button">${icon('close', 16)} 清空</button>
+            <button class="btn btn-ghost" id="mf-copy-svg" type="button">${icon('content_copy', 16)} 复制 SVG</button>
+            <button class="btn btn-ghost" id="mf-download-svg" type="button">${icon('download', 16)} SVG</button>
+            <button class="btn btn-primary" id="mf-export-png" type="button">${icon('image', 16)} PNG</button>
+          </div>
+        </div>
+
+        <div class="mf-workspace">
+          <section class="mf-panel">
+            <div class="mf-panel-head">
+              <h2 class="mf-panel-title">语法编辑</h2>
+              <div class="mf-status" id="mf-code-stat">0 行</div>
             </div>
-          </div>
-          <div class="mf-export-bar">
-            <button class="btn btn-ghost btn-sm" id="mf-copy-svg">${icon('content_copy', 14)} 复制 SVG</button>
-            <button class="btn btn-ghost btn-sm" id="mf-download-svg">${icon('download', 14)} 下载 SVG</button>
-            <button class="btn btn-ghost btn-sm" id="mf-export-png">${icon('image', 14)} 导出 PNG</button>
-          </div>
+            <textarea id="mf-input" class="tool-textarea mf-textarea" spellcheck="false" placeholder="flowchart TD&#10;  A[开始] --> B{判断}"></textarea>
+            <div class="mf-editor-footer">
+              <details class="mf-cheatsheet">
+                <summary>语法参考</summary>
+                <div class="mf-cheatsheet-content">
+                  <p><code>flowchart TD</code> 从上到下，<code>flowchart LR</code> 从左到右</p>
+                  <p><code>A[矩形]</code> <code>B(圆角)</code> <code>C{菱形}</code> <code>D((圆形))</code></p>
+                  <p><code>A --&gt; B</code> <code>A --&gt;|标签| B</code> <code>A -.&gt; B</code> <code>A ==&gt; B</code></p>
+                  <p><code>subgraph 标题</code> 定义子图，<code>end</code> 结束</p>
+                </div>
+              </details>
+              <div id="mf-error" class="mf-error"></div>
+            </div>
+          </section>
+
+          <section class="mf-panel">
+            <div class="mf-panel-head">
+              <h2 class="mf-panel-title">预览</h2>
+              <div class="mf-control-group">
+                <button class="btn btn-ghost mf-btn-icon" id="mf-zoom-out" type="button" title="缩小" aria-label="缩小">${icon('zoom_out', 18)}</button>
+                <span id="mf-zoom-label" class="mf-status" style="min-width:44px; text-align:center;">100%</span>
+                <button class="btn btn-ghost mf-btn-icon" id="mf-zoom-in" type="button" title="放大" aria-label="放大">${icon('zoom_in', 18)}</button>
+                <button class="btn btn-ghost mf-btn-icon" id="mf-fit" type="button" title="适应画布" aria-label="适应画布">${icon('maximize', 18)}</button>
+                <button class="btn btn-ghost mf-btn-icon" id="mf-zoom-reset" type="button" title="重置缩放" aria-label="重置缩放">${icon('refresh', 18)}</button>
+              </div>
+            </div>
+            <div id="mf-canvas" class="mf-canvas">
+              <div id="mf-empty-hint" class="mf-empty-hint">
+                <span style="opacity:0.35;">${icon('flowchart', 44)}</span>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
     `;
@@ -143,6 +295,8 @@ export default {
     const emptyHint = container.querySelector('#mf-empty-hint') as HTMLElement;
     const errorEl = container.querySelector('#mf-error') as HTMLElement;
     const zoomLabel = container.querySelector('#mf-zoom-label') as HTMLElement;
+    const statusEl = container.querySelector('#mf-status') as HTMLElement;
+    const codeStat = container.querySelector('#mf-code-stat') as HTMLElement;
 
     input.value = initialCode;
 
@@ -155,17 +309,26 @@ export default {
 
     // ---- Render ----
     let renderId = 0;
+    let renderedSvgSize = { width: 0, height: 0 };
+
+    function updateCodeStat() {
+      const lines = input.value ? input.value.split('\n').length : 0;
+      codeStat.textContent = `${lines} 行`;
+    }
 
     async function doRender() {
       const code = input.value.trim();
+      updateCodeStat();
       if (!code) {
         canvas.querySelectorAll('.mf-render-wrap').forEach(el => el.remove());
         emptyHint.style.display = '';
         errorEl.style.display = 'none';
+        statusEl.textContent = '空白';
         return;
       }
 
       emptyHint.style.display = 'none';
+      statusEl.textContent = '渲染中';
       const id = ++renderId;
       const mermaidId = `mf-svg-${id}`;
 
@@ -179,18 +342,25 @@ export default {
           wrap.className = 'mf-render-wrap';
           canvas.appendChild(wrap);
         }
-        wrap.innerHTML = svg;
-        const svgEl = wrap.querySelector('svg') as SVGSVGElement;
+        wrap.innerHTML = `<div class="mf-render-surface">${svg}</div>`;
+        const svgEl = wrap.querySelector('.mf-render-surface svg') as SVGSVGElement;
         if (svgEl) {
           svgEl.style.maxWidth = 'none';
           svgEl.style.height = 'auto';
+          const viewBox = svgEl.getAttribute('viewBox')?.split(/\s+/).map(Number);
+          renderedSvgSize = {
+            width: viewBox && viewBox.length === 4 ? viewBox[2] : (svgEl.width.baseVal.value || 640),
+            height: viewBox && viewBox.length === 4 ? viewBox[3] : (svgEl.height.baseVal.value || 360),
+          };
           applyZoom(svgEl);
         }
         errorEl.style.display = 'none';
+        statusEl.textContent = '已渲染';
       } catch (e: any) {
         if (id !== renderId) return;
         errorEl.style.display = '';
         errorEl.textContent = '解析错误: ' + (e.message || String(e));
+        statusEl.textContent = '解析错误';
         const w = canvas.querySelector('.mf-render-wrap');
         if (w) (w as HTMLElement).innerHTML = '';
       }
@@ -199,14 +369,28 @@ export default {
     function applyZoom(svgEl?: SVGSVGElement) {
       const wrap = canvas.querySelector('.mf-render-wrap') as HTMLElement;
       if (!wrap) return;
+      const surface = wrap.querySelector('.mf-render-surface') as HTMLElement;
       const el = svgEl || wrap.querySelector('svg') as SVGSVGElement;
       if (el) {
-        el.style.transform = `scale(${zoom})`;
-        el.style.transformOrigin = 'top left';
+        const width = Math.max(1, renderedSvgSize.width);
+        const height = Math.max(1, renderedSvgSize.height);
+        el.style.width = `${width * zoom}px`;
+        el.style.height = `${height * zoom}px`;
+        if (surface) {
+          surface.style.width = `${width * zoom + 40}px`;
+          surface.style.minHeight = `${height * zoom + 40}px`;
+        }
       }
-      wrap.style.minWidth = `${100 * zoom}%`;
-      wrap.style.minHeight = `${100 * zoom}%`;
       zoomLabel.textContent = Math.round(zoom * 100) + '%';
+    }
+
+    function fitToCanvas() {
+      if (!renderedSvgSize.width || !renderedSvgSize.height) return;
+      const rect = canvas.getBoundingClientRect();
+      const availableW = Math.max(1, rect.width - 96);
+      const availableH = Math.max(1, rect.height - 96);
+      zoom = Math.max(0.2, Math.min(3, availableW / renderedSvgSize.width, availableH / renderedSvgSize.height));
+      applyZoom();
     }
 
     // ---- Debounced input ----
@@ -234,6 +418,7 @@ export default {
       zoom = 1;
       applyZoom();
     });
+    container.querySelector('#mf-fit')!.addEventListener('click', fitToCanvas);
 
     canvas.addEventListener('wheel', (e) => {
       e.preventDefault();
@@ -255,7 +440,7 @@ export default {
 
     // ---- Export ----
     function getSVGClone(): SVGSVGElement | null {
-      const svgEl = canvas.querySelector('.mf-render-wrap svg') as SVGSVGElement;
+      const svgEl = canvas.querySelector('.mf-render-surface svg') as SVGSVGElement;
       if (!svgEl) return null;
       const clone = svgEl.cloneNode(true) as SVGSVGElement;
       clone.removeAttribute('style');
