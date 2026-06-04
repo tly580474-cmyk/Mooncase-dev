@@ -63,6 +63,7 @@ const toolLoaders: Record<string, () => Promise<ToolModule>> = {
   // 格式转换
   'image-convert': () => import('../pages/tools/image-convert'),
   'data-convert': () => import('../pages/tools/data-convert'),
+  'audio-convert': () => import('../pages/tools/audio-convert'),
   // 生成器
   'password-gen': () => import('../pages/tools/password-gen'),
   'uuid-gen': () => import('../pages/tools/uuid-gen'),

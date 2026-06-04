@@ -29,7 +29,7 @@ const categoryDescriptions: Record<ToolCategory, string> = {
   text: '文本统计、提取、替换与语言处理',
   image: '图片编辑、识别、取色与动图处理',
   code: '代码格式化、运行、预览与图表绘制',
-  conversion: '文档、数据、图片与视频格式互转',
+  conversion: '文档、数据、图片、音频与视频格式互转',
   encoding: '文本、链接、令牌与媒体编码解码',
   generator: 'UUID、二维码、占位文与字符艺术生成',
   security: '密码、哈希、签名与加密解密工具',

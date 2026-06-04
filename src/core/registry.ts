@@ -371,6 +371,14 @@ const registry: ToolMeta[] = [
     description: 'CSV/JSON/XML 数据格式互转',
     tags: ['data', 'convert', '数据', '格式', '转换', 'csv', 'json', 'xml'],
   },
+  {
+    id: 'audio-convert',
+    name: '音频格式转换',
+    icon: 'music',
+    category: 'conversion',
+    description: 'MP3/WAV/FLAC/AAC/OGG/M4A/WMA 常见音频格式互转',
+    tags: ['audio', 'convert', '音频', '格式', '转换', 'mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a', 'wma'],
+  },
   // 图片工具
   {
     id: 'image-compress',
