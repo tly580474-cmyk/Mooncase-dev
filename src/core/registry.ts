@@ -379,6 +379,14 @@ const registry: ToolMeta[] = [
     description: 'MP3/WAV/FLAC/AAC/OGG/M4A/WMA 常见音频格式互转',
     tags: ['audio', 'convert', '音频', '格式', '转换', 'mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a', 'wma'],
   },
+  {
+    id: 'special-format-convert',
+    name: '特殊格式转换',
+    icon: 'alert',
+    category: 'conversion',
+    description: '跳转到第三方特殊音频格式转换页面，含风险提示',
+    tags: ['special', 'audio', 'convert', '特殊格式', '音频', '转换', 'mflac', 'mgg', 'kgm', 'ncm', 'kwm'],
+  },
   // 图片工具
   {
     id: 'image-compress',
