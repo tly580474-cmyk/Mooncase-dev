@@ -102,6 +102,13 @@ const toolLoaders: Record<string, () => Promise<ToolModule>> = {
   'video-to-gif': () => import('../pages/tools/video-to-gif'),
   'video-to-mp3': () => import('../pages/tools/video-to-mp3'),
   'video-compress': () => import('../pages/tools/video-compress'),
+  // PDF 工具
+  'pdf-merge': () => import('../pages/tools/pdf-merge'),
+  'pdf-split': () => import('../pages/tools/pdf-split'),
+  'pdf-compress': () => import('../pages/tools/pdf-compress'),
+  // 开发者工具
+  'timestamp': () => import('../pages/tools/timestamp'),
+  'cron-parser': () => import('../pages/tools/cron-parser'),
 };
 
 function getToolId(): string {

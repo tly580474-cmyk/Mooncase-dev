@@ -542,6 +542,48 @@ const registry: ToolMeta[] = [
     description: '压缩视频文件大小，支持 4K/高清',
     tags: ['video', 'compress', '压缩', '视频', '4k', '高清'],
   },
+  // PDF 工具
+  {
+    id: 'pdf-merge',
+    name: 'PDF 合并',
+    icon: 'description',
+    category: 'conversion',
+    description: '将多个 PDF 文件合并为一个，支持拖拽排序',
+    tags: ['pdf', 'merge', '合并', 'PDF'],
+  },
+  {
+    id: 'pdf-split',
+    name: 'PDF 拆分',
+    icon: 'description',
+    category: 'conversion',
+    description: '将 PDF 拆分为单页或按页码范围提取',
+    tags: ['pdf', 'split', '拆分', '提取', 'PDF'],
+  },
+  {
+    id: 'pdf-compress',
+    name: 'PDF 压缩',
+    icon: 'compress',
+    category: 'conversion',
+    description: '压缩 PDF 文件大小，移除冗余数据',
+    tags: ['pdf', 'compress', '压缩', 'PDF'],
+  },
+  // 开发者工具
+  {
+    id: 'timestamp',
+    name: '时间戳转换',
+    icon: 'history',
+    category: 'generator',
+    description: 'Unix 时间戳与人类可读日期互转',
+    tags: ['timestamp', '时间戳', 'unix', '日期', '转换'],
+  },
+  {
+    id: 'cron-parser',
+    name: 'Cron 表达式解析',
+    icon: 'history',
+    category: 'generator',
+    description: '解析 Cron 表达式，查看含义和未来执行时间',
+    tags: ['cron', '定时', '表达式', '解析', '定时任务'],
+  },
 ];
 
 export function getRegistry(): ToolMeta[] {
