@@ -584,6 +584,15 @@ const registry: ToolMeta[] = [
     description: '解析 Cron 表达式，查看含义和未来执行时间',
     tags: ['cron', '定时', '表达式', '解析', '定时任务'],
   },
+  // 文件预览
+  {
+    id: 'file-preview',
+    name: 'Word/PDF 预览',
+    icon: 'preview',
+    category: 'text',
+    description: '在线预览 Word (.docx) 和 PDF 文件，本地处理不上传',
+    tags: ['word', 'pdf', 'docx', '预览', '文件', '文档'],
+  },
 ];
 
 export function getRegistry(): ToolMeta[] {

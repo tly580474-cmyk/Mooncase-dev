@@ -109,6 +109,7 @@ const toolLoaders: Record<string, () => Promise<ToolModule>> = {
   // 开发者工具
   'timestamp': () => import('../pages/tools/timestamp'),
   'cron-parser': () => import('../pages/tools/cron-parser'),
+  'file-preview': () => import('../pages/tools/file-preview'),
 };
 
 function getToolId(): string {
