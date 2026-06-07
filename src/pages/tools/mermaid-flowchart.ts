@@ -225,7 +225,7 @@ export default {
       </style>
       <div class="content mf-page">
         <div class="tool-page-header">
-          <a href="#/code" class="tool-page-back">${icon('code')} 代码工具</a>
+          <a href="#/dev" class="tool-page-back">${icon('code')} 开发调试</a>
           <h1 style="font: var(--text-headline-md);">Mermaid 流程图</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">使用 Mermaid 语法绘制、预览和导出流程图</p>
         </div>

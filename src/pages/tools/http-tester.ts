@@ -29,7 +29,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/network" class="tool-page-back">${icon('language')} 网络工具</a>
+          <a href="#/dev" class="tool-page-back">${icon('code')} 开发调试</a>
           <h1 style="font: var(--text-headline-md);">HTTP 请求测试器</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">发送 HTTP 请求并查看响应</p>
         </div>

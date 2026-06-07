@@ -8,7 +8,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/code" class="tool-page-back">${icon('code')} 代码工具</a>
+          <a href="#/data" class="tool-page-back">${icon('data_object')} 数据格式</a>
           <h1 style="font: var(--text-headline-md);">JSON 格式化</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">格式化、压缩、验证 JSON 数据</p>
         </div>

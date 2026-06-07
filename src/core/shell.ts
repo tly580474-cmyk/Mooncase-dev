@@ -2,7 +2,7 @@ import { icon } from './icons';
 import { getCurrentToolId, onRouteChange, setContentArea, navigate, initRouter } from './router';
 import { initSearch } from './search';
 import { initTheme } from './theme';
-import { getRegistry, type ToolCategory } from './registry';
+import { getCategories, getRegistry, type ToolCategory } from './registry';
 
 interface NavItem {
   id: string;
@@ -13,14 +13,12 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { id: 'home', label: '首页', icon: 'history' },
-  { id: 'text', label: '文本工具', icon: 'description', category: 'text' },
-  { id: 'image', label: '图片工具', icon: 'image', category: 'image' },
-  { id: 'code', label: '代码工具', icon: 'code', category: 'code' },
-  { id: 'encoding', label: '编码解码', icon: 'binary', category: 'encoding' },
-  { id: 'conversion', label: '格式转换', icon: 'swap_horiz', category: 'conversion' },
-  { id: 'generator', label: '生成器', icon: 'settings_suggest', category: 'generator' },
-  { id: 'security', label: '安全工具', icon: 'security', category: 'security' },
-  { id: 'network', label: '网络工具', icon: 'language', category: 'network' },
+  ...getCategories().map(category => ({
+    id: category.id,
+    label: category.name,
+    icon: category.icon,
+    category: category.id,
+  })),
 ];
 
 function renderSidebar(): string {

@@ -59,7 +59,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/conversion" class="tool-page-back">${icon('convert')} 格式转换</a>
+          <a href="#/image" class="tool-page-back">${icon('image')} 图片处理</a>
           <h1 style="font: var(--text-headline-md);">图片格式转换</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">JPG / PNG / WebP / BMP / GIF 图片格式互转</p>
         </div>

@@ -16,7 +16,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/generator" class="tool-page-back">${icon('settings_suggest')} 生成器</a>
+          <a href="#/dev" class="tool-page-back">${icon('code')} 开发调试</a>
           <h1 style="font: var(--text-headline-md);">UUID 生成器</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">生成 v4 UUID</p>
         </div>

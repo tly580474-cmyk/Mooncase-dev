@@ -21,14 +21,17 @@ const toolLoaders: Record<string, () => Promise<ToolModule>> = {
   'home': () => import('../pages/home'),
   // 分类页
   'text': () => import('../pages/category').then(m => ({ default: m.createCategoryPage('text') })),
+  'document': () => import('../pages/category').then(m => ({ default: m.createCategoryPage('document') })),
   'image': () => import('../pages/category').then(m => ({ default: m.createCategoryPage('image') })),
-  'code': () => import('../pages/category').then(m => ({ default: m.createCategoryPage('code') })),
+  'media': () => import('../pages/category').then(m => ({ default: m.createCategoryPage('media') })),
+  'dev': () => import('../pages/category').then(m => ({ default: m.createCategoryPage('dev') })),
+  'data': () => import('../pages/category').then(m => ({ default: m.createCategoryPage('data') })),
   'encoding': () => import('../pages/category').then(m => ({ default: m.createCategoryPage('encoding') })),
-  'conversion': () => import('../pages/category').then(m => ({ default: m.createCategoryPage('conversion') })),
+  'qr': () => import('../pages/category').then(m => ({ default: m.createCategoryPage('qr') })),
   'generator': () => import('../pages/category').then(m => ({ default: m.createCategoryPage('generator') })),
   'security': () => import('../pages/category').then(m => ({ default: m.createCategoryPage('security') })),
   'network': () => import('../pages/category').then(m => ({ default: m.createCategoryPage('network') })),
-  // 文本工具
+  // 文本处理
   'text-diff': () => import('../pages/tools/text-diff'),
   'full-half-width': () => import('../pages/tools/full-half-width'),
   'char-count': () => import('../pages/tools/char-count'),
@@ -41,7 +44,7 @@ const toolLoaders: Record<string, () => Promise<ToolModule>> = {
   'hanzi-pinyin': () => import('../pages/tools/hanzi-pinyin'),
   'md-to-word': () => import('../pages/tools/md-to-word'),
   'char-counter': () => import('../pages/tools/char-counter'),
-  // 代码工具
+  // 开发调试 / 文档 / 数据
   'json-formatter': () => import('../pages/tools/json-formatter'),
   'code-beautify': () => import('../pages/tools/code-beautify'),
   'html-code-runner': () => import('../pages/tools/html-code-runner'),
@@ -60,18 +63,18 @@ const toolLoaders: Record<string, () => Promise<ToolModule>> = {
   'base-x': () => import('../pages/tools/base-x'),
   'morse': () => import('../pages/tools/morse'),
   'jwt-decode': () => import('../pages/tools/jwt-decode'),
-  // 格式转换
+  // 图片 / 数据 / 音视频
   'image-convert': () => import('../pages/tools/image-convert'),
   'data-convert': () => import('../pages/tools/data-convert'),
   'audio-convert': () => import('../pages/tools/audio-convert'),
   'special-format-convert': () => import('../pages/tools/special-format-convert'),
-  // 生成器
+  // 内容生成 / 二维码
   'password-gen': () => import('../pages/tools/password-gen'),
   'uuid-gen': () => import('../pages/tools/uuid-gen'),
   'lorem-gen': () => import('../pages/tools/lorem-gen'),
   'qr-code': () => import('../pages/tools/qr-code'),
   'qr-scan': () => import('../pages/tools/qr-scan'),
-  // 图片工具
+  // 图片处理
   'image-compress': () => import('../pages/tools/image-compress'),
   'image-crop': () => import('../pages/tools/image-crop'),
   'image-base64': () => import('../pages/tools/image-base64'),
@@ -81,14 +84,14 @@ const toolLoaders: Record<string, () => Promise<ToolModule>> = {
   'image-color-picker': () => import('../pages/tools/image-color-picker'),
   'ocr-extract': () => import('../pages/tools/ocr-extract'),
   'image-upscale': () => import('../pages/tools/image-upscale'),
-  // 安全工具
+  // 密码安全
   'hash-gen': () => import('../pages/tools/hash-gen'),
   'hmac-gen': () => import('../pages/tools/hmac-gen'),
   'http-tester': () => import('../pages/tools/http-tester'),
   'symmetric-crypto': () => import('../pages/tools/symmetric-crypto'),
   'caesar-cipher': () => import('../pages/tools/caesar-cipher'),
   'rail-fence': () => import('../pages/tools/rail-fence'),
-  // 网络工具
+  // 网络诊断
   'ip-query': () => import('../pages/tools/ip-query'),
   'online-ping': () => import('../pages/tools/online-ping'),
   'online-tcping': () => import('../pages/tools/online-tcping'),

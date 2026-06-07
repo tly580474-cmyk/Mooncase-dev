@@ -1,40 +1,7 @@
 import { icon } from '../core/icons';
-import { getRegistry, type ToolCategory } from '../core/registry';
+import { getCategories, getRegistry } from '../core/registry';
 import { getRecentTools } from '../core/storage';
 import { navigate } from '../core/router';
-
-const categoryNames: Record<ToolCategory, string> = {
-  text: '文本工具',
-  image: '图片工具',
-  code: '代码工具',
-  conversion: '格式转换',
-  encoding: '编码解码',
-  generator: '生成器',
-  security: '安全工具',
-  network: '网络工具',
-};
-
-const categoryIcons: Record<ToolCategory, string> = {
-  text: 'description',
-  image: 'image',
-  code: 'code',
-  conversion: 'swap_horiz',
-  encoding: 'binary',
-  generator: 'settings_suggest',
-  security: 'security',
-  network: 'language',
-};
-
-const categoryDescriptions: Record<ToolCategory, string> = {
-  text: '文本统计、提取、替换与语言处理',
-  image: '图片编辑、识别、取色与动图处理',
-  code: '代码格式化、运行、预览与图表绘制',
-  conversion: '文档、数据、图片、音频与视频格式互转',
-  encoding: '文本、链接、令牌与媒体编码解码',
-  generator: 'UUID、二维码、占位文与字符艺术生成',
-  security: '密码、哈希、签名与加密解密工具',
-  network: 'IP、DNS、连通性与 HTTP 请求测试',
-};
 
 function renderHero(): string {
   return `
@@ -90,23 +57,23 @@ function renderRecent(): string {
 
 function renderBentoGrid(): string {
   const registry = getRegistry();
-  const categories: ToolCategory[] = ['text', 'image', 'code', 'encoding', 'generator', 'network', 'conversion', 'security'];
+  const categories = getCategories();
 
   return `
     <section class="mb-16">
       <h3 style="font: var(--text-headline-md); margin-bottom: 32px;">全部工具分类</h3>
       <div class="bento-grid">
         ${categories.map(cat => {
-          const tools = registry.filter(t => t.category === cat);
-          const isWide = cat === 'text' || cat === 'image';
+          const tools = registry.filter(t => t.category === cat.id);
+          const isWide = cat.id === 'text' || cat.id === 'document' || cat.id === 'image';
           return `
             <div class="bento-item ${isWide ? 'bento-item--wide' : 'bento-item--narrow'}">
               <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
                 <div>
-                  <h4 style="font: var(--text-headline-sm); margin-bottom: 8px;">${categoryNames[cat]}</h4>
-                  <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">${categoryDescriptions[cat]}</p>
+                  <h4 style="font: var(--text-headline-sm); margin-bottom: 8px;">${cat.name}</h4>
+                  <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">${cat.description}</p>
                 </div>
-                <span style="color: var(--color-primary); opacity: 0.2;">${icon(categoryIcons[cat], 36)}</span>
+                <span style="color: var(--color-primary); opacity: 0.2;">${icon(cat.icon, 36)}</span>
               </div>
               <ul style="display: grid; gap: 12px; ${isWide ? 'grid-template-columns: 1fr 1fr;' : ''}">
                 ${tools.map(tool => `

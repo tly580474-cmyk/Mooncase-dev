@@ -67,7 +67,7 @@ export default {
       </style>
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/conversion" class="tool-page-back">${icon('convert')} 格式转换</a>
+          <a href="#/media" class="tool-page-back">${icon('film')} 音视频</a>
           <h1 style="font: var(--text-headline-md);">特殊格式转换</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">跳转到外部特殊音频格式转换页面</p>
         </div>
@@ -88,8 +88,8 @@ export default {
             <a href="${TARGET_URL}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
               ${icon('link')} 前往特殊格式转换
             </a>
-            <a href="#/conversion" class="btn btn-secondary">
-              ${icon('convert')} 返回格式转换
+            <a href="#/media" class="btn btn-secondary">
+              ${icon('film')} 返回音视频
             </a>
           </div>
 

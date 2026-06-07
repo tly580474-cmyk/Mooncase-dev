@@ -20,7 +20,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/image" class="tool-page-back">${icon('image')} 图片工具</a>
+          <a href="#/image" class="tool-page-back">${icon('image')} 图片处理</a>
           <h1 style="font: var(--text-headline-md);">动态头像生成器</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">为头像添加动画效果，导出GIF或复制CSS代码</p>
         </div>

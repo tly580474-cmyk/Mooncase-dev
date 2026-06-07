@@ -157,7 +157,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/generator" class="tool-page-back">${icon('sparkles')} 生成器</a>
+          <a href="#/dev" class="tool-page-back">${icon('code')} 开发调试</a>
           <h1 style="font: var(--text-headline-md);">Cron 表达式解析</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">解析 Cron 表达式，查看含义和未来执行时间</p>
         </div>

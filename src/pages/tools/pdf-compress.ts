@@ -9,7 +9,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/conversion" class="tool-page-back">${icon('swap_horiz')} 格式转换</a>
+          <a href="#/document" class="tool-page-back">${icon('file_type')} 文档 PDF</a>
           <h1 style="font: var(--text-headline-md);">PDF 压缩</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">压缩 PDF 文件大小，移除冗余数据</p>
         </div>

@@ -9,7 +9,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/text" class="tool-page-back">${icon('description')} 文本工具</a>
+          <a href="#/text" class="tool-page-back">${icon('description')} 文本处理</a>
           <h1 style="font: var(--text-headline-md);">繁简中文转换器</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">简体中文与繁体中文互转</p>
         </div>

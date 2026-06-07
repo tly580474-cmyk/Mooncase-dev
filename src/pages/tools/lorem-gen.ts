@@ -24,7 +24,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/generator" class="tool-page-back">${icon('settings_suggest')} 生成器</a>
+          <a href="#/generator" class="tool-page-back">${icon('sparkles')} 内容生成</a>
           <h1 style="font: var(--text-headline-md);">占位文生成</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">生成 Lorem Ipsum 占位文本</p>
         </div>

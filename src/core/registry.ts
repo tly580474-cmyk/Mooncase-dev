@@ -1,12 +1,23 @@
 export type ToolCategory =
   | 'text'
+  | 'document'
   | 'image'
-  | 'code'
-  | 'conversion'
+  | 'media'
+  | 'dev'
+  | 'data'
   | 'encoding'
+  | 'qr'
   | 'generator'
   | 'security'
   | 'network';
+
+export interface CategoryMeta {
+  id: ToolCategory;
+  name: string;
+  icon: string;
+  description: string;
+  color: string;
+}
 
 export interface ToolMeta {
   id: string;
@@ -16,6 +27,86 @@ export interface ToolMeta {
   description: string;
   tags: string[];
 }
+
+export const categories: CategoryMeta[] = [
+  {
+    id: 'text',
+    name: '文本处理',
+    icon: 'description',
+    description: '文本统计、提取、替换、对比与中文处理',
+    color: '#3d70d8',
+  },
+  {
+    id: 'document',
+    name: '文档 PDF',
+    icon: 'file_type',
+    description: 'PDF、Word、Markdown 等文档预览与转换',
+    color: '#6f4fc7',
+  },
+  {
+    id: 'image',
+    name: '图片处理',
+    icon: 'image',
+    description: '图片压缩、裁剪、识别、取色与动图处理',
+    color: '#5c8cf5',
+  },
+  {
+    id: 'media',
+    name: '音视频',
+    icon: 'film',
+    description: '音频、视频格式转换、提取与压缩',
+    color: '#8a4f2a',
+  },
+  {
+    id: 'dev',
+    name: '开发调试',
+    icon: 'code',
+    description: '代码运行、格式化、正则、接口与时间工具',
+    color: '#1b57bd',
+  },
+  {
+    id: 'data',
+    name: '数据格式',
+    icon: 'data_object',
+    description: 'JSON、CSV、XML 等结构化数据处理',
+    color: '#0f766e',
+  },
+  {
+    id: 'encoding',
+    name: '编码解码',
+    icon: 'binary',
+    description: 'Base、URL、Unicode、令牌与文本编码解码',
+    color: '#276b61',
+  },
+  {
+    id: 'qr',
+    name: '二维码',
+    icon: 'qr_code_2',
+    description: '二维码生成、扫描与识别',
+    color: '#6d5dfc',
+  },
+  {
+    id: 'generator',
+    name: '内容生成',
+    icon: 'sparkles',
+    description: '占位文、字符艺术等内容生成',
+    color: '#585f6a',
+  },
+  {
+    id: 'security',
+    name: '密码安全',
+    icon: 'security',
+    description: '密码、哈希、签名、加密与古典密码',
+    color: '#ba1a1a',
+  },
+  {
+    id: 'network',
+    name: '网络诊断',
+    icon: 'language',
+    description: 'IP、DNS、连通性、路由与网站测速',
+    color: '#1f59c0',
+  },
+];
 
 const registry: ToolMeta[] = [
   {
@@ -110,7 +201,7 @@ const registry: ToolMeta[] = [
     id: 'md-to-word',
     name: 'Markdown 转 Word',
     icon: 'description',
-    category: 'conversion',
+    category: 'document',
     description: '将 Markdown 文本转换为 Word 文档',
     tags: ['markdown', 'word', 'docx', '文档', '转换'],
   },
@@ -118,7 +209,7 @@ const registry: ToolMeta[] = [
     id: 'json-formatter',
     name: 'JSON 格式化',
     icon: 'data_object',
-    category: 'code',
+    category: 'data',
     description: '格式化、压缩、验证 JSON 数据',
     tags: ['json', 'format', '格式化', '压缩'],
   },
@@ -126,7 +217,7 @@ const registry: ToolMeta[] = [
     id: 'code-beautify',
     name: '代码美化',
     icon: 'code',
-    category: 'code',
+    category: 'dev',
     description: 'HTML / CSS / JS 代码格式化',
     tags: ['code', 'beautify', '美化', '格式化'],
   },
@@ -134,7 +225,7 @@ const registry: ToolMeta[] = [
     id: 'html-code-runner',
     name: 'HTML/CSS/JS 在线运行',
     icon: 'javascript',
-    category: 'code',
+    category: 'dev',
     description: '粘贴代码一键运行，实时预览页面渲染效果',
     tags: ['html', 'css', 'javascript', 'js', 'run', 'preview', '代码运行', '实时预览'],
   },
@@ -142,7 +233,7 @@ const registry: ToolMeta[] = [
     id: 'regex-test',
     name: '正则测试',
     icon: 'regular_expression',
-    category: 'code',
+    category: 'dev',
     description: '实时测试正则表达式匹配',
     tags: ['regex', '正则', '匹配'],
   },
@@ -150,7 +241,7 @@ const registry: ToolMeta[] = [
     id: 'markdown-preview',
     name: 'Markdown 文件预览器',
     icon: 'preview',
-    category: 'code',
+    category: 'document',
     description: 'Markdown 实时预览，支持代码高亮、表格和流程图',
     tags: ['markdown', 'preview', '预览', '渲染', 'flowchart'],
   },
@@ -158,7 +249,7 @@ const registry: ToolMeta[] = [
     id: 'code-highlight',
     name: '代码高亮工具',
     icon: 'palette',
-    category: 'code',
+    category: 'dev',
     description: '代码语法高亮，支持多种语言，可导出 HTML',
     tags: ['code', 'highlight', '高亮', '语法', 'syntax'],
   },
@@ -190,7 +281,7 @@ const registry: ToolMeta[] = [
     id: 'sql-er-diagram',
     name: 'ER 实体关系图',
     icon: 'network',
-    category: 'code',
+    category: 'dev',
     description: '从 SQL DDL 生成 Chen 记法实体关系图，支持拖拽编辑、实时预览和导出',
     tags: ['sql', 'er', 'diagram', '数据库', 'ER图', 'chen', '实体关系'],
   },
@@ -198,7 +289,7 @@ const registry: ToolMeta[] = [
     id: 'mermaid-flowchart',
     name: 'Mermaid 流程图',
     icon: 'flowchart',
-    category: 'code',
+    category: 'dev',
     description: '使用 Mermaid 语法在线绘制流程图，支持实时预览、缩放和导出',
     tags: ['mermaid', 'flowchart', '流程图', '图表', 'graph', 'diagram'],
   },
@@ -214,7 +305,7 @@ const registry: ToolMeta[] = [
     id: 'uuid-gen',
     name: 'UUID 生成器',
     icon: 'tag',
-    category: 'generator',
+    category: 'dev',
     description: '生成 v4 UUID',
     tags: ['uuid', '生成', 'id'],
   },
@@ -230,7 +321,7 @@ const registry: ToolMeta[] = [
     id: 'qr-code',
     name: '二维码生成',
     icon: 'qr_code_2',
-    category: 'generator',
+    category: 'qr',
     description: '将文本转换为二维码',
     tags: ['qr', '二维码', '生成'],
   },
@@ -238,7 +329,7 @@ const registry: ToolMeta[] = [
     id: 'qr-scan',
     name: '二维码扫描',
     icon: 'qr_code_scanner',
-    category: 'image',
+    category: 'qr',
     description: '通过摄像头或图片识别二维码',
     tags: ['qr', '二维码', '扫描', '识别', 'scan'],
   },
@@ -286,7 +377,7 @@ const registry: ToolMeta[] = [
     id: 'jwt-decode',
     name: 'JWT 解码器',
     icon: 'key',
-    category: 'encoding',
+    category: 'dev',
     description: '解码 JWT Token 查看 Header 和 Payload',
     tags: ['jwt', 'token', '解码', 'json web token'],
   },
@@ -359,7 +450,7 @@ const registry: ToolMeta[] = [
     id: 'image-convert',
     name: '图片格式转换',
     icon: 'convert',
-    category: 'conversion',
+    category: 'image',
     description: 'JPG/PNG/WebP/BMP/GIF 图片格式互转',
     tags: ['image', 'convert', '图片', '格式', '转换', 'jpg', 'png', 'webp'],
   },
@@ -367,7 +458,7 @@ const registry: ToolMeta[] = [
     id: 'data-convert',
     name: '数据格式转换',
     icon: 'file_type',
-    category: 'conversion',
+    category: 'data',
     description: 'CSV/JSON/XML 数据格式互转',
     tags: ['data', 'convert', '数据', '格式', '转换', 'csv', 'json', 'xml'],
   },
@@ -375,7 +466,7 @@ const registry: ToolMeta[] = [
     id: 'audio-convert',
     name: '音频格式转换',
     icon: 'music',
-    category: 'conversion',
+    category: 'media',
     description: 'MP3/WAV/FLAC/AAC/OGG/M4A/WMA 常见音频格式互转',
     tags: ['audio', 'convert', '音频', '格式', '转换', 'mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a', 'wma'],
   },
@@ -383,7 +474,7 @@ const registry: ToolMeta[] = [
     id: 'special-format-convert',
     name: '特殊格式转换',
     icon: 'alert',
-    category: 'conversion',
+    category: 'media',
     description: '跳转到第三方特殊音频格式转换页面，含风险提示',
     tags: ['special', 'audio', 'convert', '特殊格式', '音频', '转换', 'mflac', 'mgg', 'kgm', 'ncm', 'kwm'],
   },
@@ -416,7 +507,7 @@ const registry: ToolMeta[] = [
     id: 'image-to-pdf',
     name: '图片转PDF',
     icon: 'file_image',
-    category: 'conversion',
+    category: 'document',
     description: '将多张图片合并为PDF文件',
     tags: ['image', 'pdf', '图片', '合并', '转换'],
   },
@@ -481,7 +572,7 @@ const registry: ToolMeta[] = [
     id: 'http-tester',
     name: 'HTTP 请求测试器',
     icon: 'http',
-    category: 'network',
+    category: 'dev',
     description: '发送 HTTP 请求并查看响应',
     tags: ['http', 'request', '请求', '测试', 'api'],
   },
@@ -514,7 +605,7 @@ const registry: ToolMeta[] = [
     id: 'video-convert',
     name: '视频格式转换',
     icon: 'convert',
-    category: 'conversion',
+    category: 'media',
     description: 'MP4/MOV/AVI/MKV/FLV/WMV 视频格式互转',
     tags: ['video', 'convert', '视频', '格式', '转换', 'mp4', 'mov', 'avi', 'mkv'],
   },
@@ -522,7 +613,7 @@ const registry: ToolMeta[] = [
     id: 'video-to-gif',
     name: '视频转GIF',
     icon: 'film',
-    category: 'conversion',
+    category: 'media',
     description: '将视频片段转换为 GIF 动图',
     tags: ['video', 'gif', '视频', '动图', '转换'],
   },
@@ -530,7 +621,7 @@ const registry: ToolMeta[] = [
     id: 'video-to-mp3',
     name: '视频转MP3',
     icon: 'music',
-    category: 'conversion',
+    category: 'media',
     description: '从视频中提取音频为 MP3 文件',
     tags: ['video', 'mp3', '音频', '提取', '视频'],
   },
@@ -538,7 +629,7 @@ const registry: ToolMeta[] = [
     id: 'video-compress',
     name: '视频压缩',
     icon: 'zap',
-    category: 'conversion',
+    category: 'media',
     description: '压缩视频文件大小，支持 4K/高清',
     tags: ['video', 'compress', '压缩', '视频', '4k', '高清'],
   },
@@ -547,7 +638,7 @@ const registry: ToolMeta[] = [
     id: 'pdf-merge',
     name: 'PDF 合并',
     icon: 'description',
-    category: 'conversion',
+    category: 'document',
     description: '将多个 PDF 文件合并为一个，支持拖拽排序',
     tags: ['pdf', 'merge', '合并', 'PDF'],
   },
@@ -555,7 +646,7 @@ const registry: ToolMeta[] = [
     id: 'pdf-split',
     name: 'PDF 拆分',
     icon: 'description',
-    category: 'conversion',
+    category: 'document',
     description: '将 PDF 拆分为单页或按页码范围提取',
     tags: ['pdf', 'split', '拆分', '提取', 'PDF'],
   },
@@ -563,7 +654,7 @@ const registry: ToolMeta[] = [
     id: 'pdf-compress',
     name: 'PDF 压缩',
     icon: 'compress',
-    category: 'conversion',
+    category: 'document',
     description: '压缩 PDF 文件大小，移除冗余数据',
     tags: ['pdf', 'compress', '压缩', 'PDF'],
   },
@@ -572,7 +663,7 @@ const registry: ToolMeta[] = [
     id: 'timestamp',
     name: '时间戳转换',
     icon: 'history',
-    category: 'generator',
+    category: 'dev',
     description: 'Unix 时间戳与人类可读日期互转',
     tags: ['timestamp', '时间戳', 'unix', '日期', '转换'],
   },
@@ -580,7 +671,7 @@ const registry: ToolMeta[] = [
     id: 'cron-parser',
     name: 'Cron 表达式解析',
     icon: 'history',
-    category: 'generator',
+    category: 'dev',
     description: '解析 Cron 表达式，查看含义和未来执行时间',
     tags: ['cron', '定时', '表达式', '解析', '定时任务'],
   },
@@ -589,7 +680,7 @@ const registry: ToolMeta[] = [
     id: 'file-preview',
     name: 'Word/PDF 预览',
     icon: 'preview',
-    category: 'text',
+    category: 'document',
     description: '在线预览 Word (.docx) 和 PDF 文件，本地处理不上传',
     tags: ['word', 'pdf', 'docx', '预览', '文件', '文档'],
   },
@@ -597,6 +688,14 @@ const registry: ToolMeta[] = [
 
 export function getRegistry(): ToolMeta[] {
   return registry;
+}
+
+export function getCategories(): CategoryMeta[] {
+  return categories;
+}
+
+export function getCategoryMeta(id: ToolCategory): CategoryMeta {
+  return categories.find(category => category.id === id)!;
 }
 
 export function getToolMeta(id: string): ToolMeta | undefined {

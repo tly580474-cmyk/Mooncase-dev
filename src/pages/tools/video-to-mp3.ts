@@ -9,7 +9,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/conversion" class="tool-page-back">${icon('convert')} 格式转换</a>
+          <a href="#/media" class="tool-page-back">${icon('film')} 音视频</a>
           <h1 style="font: var(--text-headline-md);">视频转MP3</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">从视频中提取音频为 MP3 文件</p>
         </div>

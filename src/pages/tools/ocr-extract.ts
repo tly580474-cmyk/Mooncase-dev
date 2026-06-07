@@ -8,7 +8,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/image" class="tool-page-back">${icon('image')} 图片工具</a>
+          <a href="#/image" class="tool-page-back">${icon('image')} 图片处理</a>
           <h1 style="font: var(--text-headline-md);">OCR文字识别</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">识别图片中的中英文文字，支持粘贴和拖拽上传</p>
         </div>

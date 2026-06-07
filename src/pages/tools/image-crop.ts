@@ -8,7 +8,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/image" class="tool-page-back">${icon('image')} 图片工具</a>
+          <a href="#/image" class="tool-page-back">${icon('image')} 图片处理</a>
           <h1 style="font: var(--text-headline-md);">图片裁剪</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">在线裁剪和调整图片尺寸</p>
         </div>

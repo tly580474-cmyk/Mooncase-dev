@@ -10,7 +10,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/generator" class="tool-page-back">${icon('sparkles')} 生成器</a>
+          <a href="#/dev" class="tool-page-back">${icon('code')} 开发调试</a>
           <h1 style="font: var(--text-headline-md);">时间戳转换</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">Unix 时间戳与人类可读日期互转</p>
         </div>

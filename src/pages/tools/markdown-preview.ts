@@ -319,7 +319,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/code" class="tool-page-back">${icon('code')} 代码工具</a>
+          <a href="#/document" class="tool-page-back">${icon('file_type')} 文档 PDF</a>
           <h1 style="font: var(--text-headline-md);">Markdown 文件预览器</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">Markdown 实时预览，支持代码高亮、表格和流程图</p>
         </div>

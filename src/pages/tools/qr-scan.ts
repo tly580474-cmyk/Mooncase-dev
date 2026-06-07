@@ -26,7 +26,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/image" class="tool-page-back">${icon('image')} 图片工具</a>
+          <a href="#/qr" class="tool-page-back">${icon('qr_code_2')} 二维码</a>
           <h1 style="font: var(--text-headline-md);">二维码扫描</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">通过摄像头实时扫描或上传图片识别二维码</p>
         </div>

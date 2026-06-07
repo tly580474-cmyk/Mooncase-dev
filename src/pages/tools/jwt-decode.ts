@@ -25,7 +25,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/encoding" class="tool-page-back">${icon('binary')} 编码解码</a>
+          <a href="#/dev" class="tool-page-back">${icon('code')} 开发调试</a>
           <h1 style="font: var(--text-headline-md);">JWT 解码器</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">解码 JWT Token，查看 Header、Payload 和签名</p>
         </div>

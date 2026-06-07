@@ -8,7 +8,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/text" class="tool-page-back">${icon('description')} 文本工具</a>
+          <a href="#/text" class="tool-page-back">${icon('description')} 文本处理</a>
           <h1 style="font: var(--text-headline-md);">大小写转换器</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">文本大小写格式转换</p>
         </div>

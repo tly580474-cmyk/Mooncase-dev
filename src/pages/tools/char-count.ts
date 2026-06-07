@@ -8,7 +8,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/text" class="tool-page-back">${icon('swap_horiz')} 文本工具</a>
+          <a href="#/text" class="tool-page-back">${icon('description')} 文本处理</a>
           <h1 style="font: var(--text-headline-md);">字符统计</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">统计文本的字符数、单词数、行数</p>
         </div>

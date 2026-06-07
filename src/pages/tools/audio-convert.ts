@@ -151,7 +151,7 @@ export default {
       </style>
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/conversion" class="tool-page-back">${icon('convert')} 格式转换</a>
+          <a href="#/media" class="tool-page-back">${icon('film')} 音视频</a>
           <h1 style="font: var(--text-headline-md);">音频格式转换</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">MP3 / WAV / FLAC / AAC / OGG / M4A / WMA 常见音频格式互转</p>
         </div>

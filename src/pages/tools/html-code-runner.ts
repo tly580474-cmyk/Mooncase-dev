@@ -385,7 +385,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/code" class="tool-page-back">${icon('code')} 代码工具</a>
+          <a href="#/dev" class="tool-page-back">${icon('code')} 开发调试</a>
           <h1 style="font: var(--text-headline-md);">HTML/CSS/JS 在线运行</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">粘贴代码、一键运行，实时预览渲染效果，高效验证代码逻辑与页面样式</p>
         </div>

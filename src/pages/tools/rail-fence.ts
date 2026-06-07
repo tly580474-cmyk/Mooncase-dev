@@ -44,7 +44,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/security" class="tool-page-back">${icon('security')} 安全工具</a>
+          <a href="#/security" class="tool-page-back">${icon('security')} 密码安全</a>
           <h1 style="font: var(--text-headline-md);">栅栏密码</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">将文本按 Z 字形排列后逐行读取</p>
         </div>

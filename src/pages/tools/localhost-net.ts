@@ -8,7 +8,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/network" class="tool-page-back">${icon('language')} 网络工具</a>
+          <a href="#/network" class="tool-page-back">${icon('language')} 网络诊断</a>
           <h1 style="font: var(--text-headline-md);">本地网络</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">查看本地网络信息</p>
         </div>

@@ -847,7 +847,7 @@ export default {
     container.innerHTML = `
       <div class="content" style="max-width:100%;">
         <div class="tool-page-header">
-          <a href="#/code" class="tool-page-back">${icon('code')} 代码工具</a>
+          <a href="#/dev" class="tool-page-back">${icon('code')} 开发调试</a>
           <h1 style="font: var(--text-headline-md);">ER 实体关系图</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">
             基于 Chen 记法的实体关系建模工具 — 矩形实体 · 椭圆属性 · 菱形联系 · 1:1 / 1:N / M:N

@@ -9,7 +9,7 @@ export default {
     container.innerHTML = `
       <div class="content">
         <div class="tool-page-header">
-          <a href="#/text" class="tool-page-back">${icon('abc')} 文本工具</a>
+          <a href="#/document" class="tool-page-back">${icon('file_type')} 文档 PDF</a>
           <h1 style="font: var(--text-headline-md);">Word/PDF 预览</h1>
           <p style="font: var(--text-body-md); color: var(--color-on-surface-variant);">在线预览 Word (.docx) 和 PDF 文件，本地处理不上传</p>
         </div>
