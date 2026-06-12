@@ -310,6 +310,14 @@ const registry: ToolMeta[] = [
     tags: ['uuid', '生成', 'id'],
   },
   {
+    id: 'linux-command-gen',
+    name: 'Linux 命令生成器',
+    icon: 'code',
+    category: 'dev',
+    description: '按场景选择命令并填写参数，生成常用 Linux 命令',
+    tags: ['linux', 'command', 'shell', '命令', '终端', 'bash', '生成'],
+  },
+  {
     id: 'lorem-gen',
     name: '占位文生成',
     icon: 'article',

@@ -71,6 +71,7 @@ const toolLoaders: Record<string, () => Promise<ToolModule>> = {
   // 内容生成 / 二维码
   'password-gen': () => import('../pages/tools/password-gen'),
   'uuid-gen': () => import('../pages/tools/uuid-gen'),
+  'linux-command-gen': () => import('../pages/tools/linux-command-gen'),
   'lorem-gen': () => import('../pages/tools/lorem-gen'),
   'qr-code': () => import('../pages/tools/qr-code'),
   'qr-scan': () => import('../pages/tools/qr-scan'),
